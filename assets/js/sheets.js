@@ -15,8 +15,25 @@ const GIDS = {
   dashboard: "1643196814",
   roster: "572784313",
   presentations: "2069434519",
+  syllabus: "1905738931",
+  updateLog: "1731368813",
 };
 // ──────────────────────────────────────────────────────────────────
+
+/**
+ * Parse a gviz date cell value, which comes back as a literal string
+ * like "Date(2026,8,14)" (month is 0-indexed), into a readable string
+ * like "Sep 14, 2026". Returns "" if the value isn't a gviz date.
+ */
+function formatGvizDate(value) {
+  if (!value || typeof value !== "string" || !value.startsWith("Date(")) {
+    return value || "";
+  }
+  const nums = value.slice(5, -1).split(",").map(n => parseInt(n, 10));
+  const [y, m, d] = nums;
+  const dt = new Date(y, m, d);
+  return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 
 /**
  * Fetch a single tab from the published Google Sheet and return it as
@@ -98,14 +115,16 @@ async function fetchTab(gid) {
 }
 
 /**
- * Convenience: fetch Dashboard, Roster, and Presentation Tracker together.
- * @returns {Promise<{dashboard: Array, roster: Array, presentations: Array}>}
+ * Convenience: fetch all five tabs together.
+ * @returns {Promise<{dashboard: Array, roster: Array, presentations: Array, syllabus: Array, updateLog: Array}>}
  */
 async function fetchAllTabs() {
-  const [dashboard, roster, presentations] = await Promise.all([
+  const [dashboard, roster, presentations, syllabus, updateLog] = await Promise.all([
     fetchTab(GIDS.dashboard),
     fetchTab(GIDS.roster),
     fetchTab(GIDS.presentations),
+    fetchTab(GIDS.syllabus),
+    fetchTab(GIDS.updateLog),
   ]);
-  return { dashboard, roster, presentations };
+  return { dashboard, roster, presentations, syllabus, updateLog };
 }
