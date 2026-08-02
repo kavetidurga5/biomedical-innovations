@@ -109,8 +109,8 @@
           <div class="conf-pill">
             <span class="conf-pill-icon">📋</span>
             <div class="conf-pill-text">
-              <span class="conf-pill-name">${escapeHtml(p["Deliverable"] || p["Presentation"] || "Presentation")}</span>
-              <span class="conf-pill-date">${escapeHtml(p["Date"] || "")} · ${escapeHtml(p["Prep Status"] || p["Status"] || "")}</span>
+              <span class="conf-pill-name">${escapeHtml(p["Presentation Type"] || "Presentation")}</span>
+              <span class="conf-pill-date">${escapeHtml(p["Date"] || "")} · ${escapeHtml(p["Prep Status"] || "")}${p["Owner"] ? " · " + escapeHtml(p["Owner"]) : ""}</span>
             </div>
           </div>`).join("");
       } else {
