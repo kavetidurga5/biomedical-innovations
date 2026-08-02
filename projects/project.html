@@ -249,14 +249,19 @@
 
       const presEl = document.getElementById("presentations-row");
       if (pres.length) {
-        presEl.innerHTML = pres.map(p => `
-          <div class="conf-pill">
+        presEl.innerHTML = pres.map(p => {
+          const name = p["Event Name"] || p["Presentation Type"] || "Presentation";
+          const link = p["Link"] ? p["Link"].trim() : "";
+          const inner = `
             <span class="conf-pill-icon">📋</span>
             <div class="conf-pill-text">
-              <span class="conf-pill-name">${escapeHtml(p["Presentation Type"] || "Presentation")}</span>
-              <span class="conf-pill-date">${escapeHtml(p["Date"] || "")} · ${escapeHtml(p["Prep Status"] || "")}${p["Owner"] ? " · " + escapeHtml(p["Owner"]) : ""}</span>
-            </div>
-          </div>`).join("");
+              <span class="conf-pill-name">${escapeHtml(name)}</span>
+              <span class="conf-pill-date">${escapeHtml(formatGvizDate(p["Date"]))} · ${escapeHtml(p["Prep Status"] || "")}${p["Owner"] ? " · " + escapeHtml(p["Owner"]) : ""}</span>
+            </div>`;
+          return link
+            ? `<a class="conf-pill" href="${escapeHtml(link)}" target="_blank" rel="noopener">${inner}</a>`
+            : `<div class="conf-pill">${inner}</div>`;
+        }).join("");
       } else {
         presEl.innerHTML = `<p class="state-message-dark">No presentations scheduled yet.</p>`;
       }
