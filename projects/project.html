@@ -52,6 +52,18 @@
       </div>
     </div>
 
+    <p class="conf-heading">Roadmap</p>
+    <div class="roadmap-wrap">
+      <div class="roadmap-track">
+        <div class="roadmap-line-bg"></div>
+        <div class="roadmap-line-fill" id="roadmap-fill"></div>
+        <div class="roadmap-nodes" id="roadmap-nodes">
+          <p class="state-message-dark">Loading roadmap…</p>
+        </div>
+      </div>
+      <div class="roadmap-detail" id="roadmap-detail"></div>
+    </div>
+
     <p class="conf-heading">Presentations</p>
     <div class="conf-row" id="presentations-row">
       <p class="state-message-dark">Loading…</p>
@@ -80,10 +92,11 @@
     document.getElementById("project-title").textContent = "No project specified";
     document.getElementById("project-subtitle").textContent = "Go back to Projects and pick one from the list.";
   } else {
-    fetchAllTabs().then(({ dashboard, roster, presentations }) => {
+    fetchAllTabs().then(({ dashboard, roster, presentations, syllabus, updateLog }) => {
       const project = dashboard.find(r => r["Project"] === projectId);
       const team = roster.filter(r => r["Project"] === projectId);
       const pres = presentations.filter(r => r["Project"] === projectId);
+      const logs = updateLog.filter(r => r["Project"] === projectId);
 
       document.getElementById("project-title").textContent = projectId;
       document.getElementById("project-subtitle").textContent =
@@ -101,7 +114,74 @@
         : "Not yet assigned";
       document.getElementById("team-text").innerHTML = `<strong>${teamText}</strong>`;
 
-      const presEl = document.getElementById("presentations-row");
+      // ── Roadmap ──
+      // Syllabus Map rows are the fixed checkpoints (ordered by Week).
+      // A checkpoint is "reached" if there's an Update Log entry for this
+      // project whose Biodesign Stage matches the checkpoint's Expected
+      // Stage (case-insensitive). The earliest such entry's Timestamp is
+      // the actual date reached; its Description is the debrief.
+      const checkpoints = syllabus
+        .slice()
+        .sort((a, b) => (parseFloat(a["Week"]) || 0) - (parseFloat(b["Week"]) || 0))
+        .map(row => {
+          const expectedStage = (row["Expected Stage"] || "").trim();
+          const matches = logs
+            .filter(l => (l["Biodesign Stage"] || "").trim().toLowerCase() === expectedStage.toLowerCase())
+            .sort((a, b) => String(a["Timestamp"]).localeCompare(String(b["Timestamp"])));
+          const reached = matches.length > 0;
+          return {
+            week: row["Week"],
+            targetDate: formatGvizDate(row["Date"]),
+            topic: row["Topic"] || "",
+            expectedStage,
+            reached,
+            actualDate: reached ? formatGvizDate(matches[0]["Timestamp"]) : null,
+            debrief: reached ? (matches[0]["Description"] || "") : "",
+          };
+        });
+
+      const lastReachedIdx = checkpoints.reduce((acc, c, i) => (c.reached ? i : acc), -1);
+      const nodesEl = document.getElementById("roadmap-nodes");
+      const fillEl = document.getElementById("roadmap-fill");
+      const detailEl = document.getElementById("roadmap-detail");
+
+      if (!checkpoints.length) {
+        nodesEl.innerHTML = `<p class="state-message-dark">No syllabus checkpoints found.</p>`;
+      } else {
+        nodesEl.innerHTML = checkpoints.map((c, i) => {
+          const isCurrent = i === lastReachedIdx + 1; // next checkpoint up
+          const cls = c.reached ? "reached" : (isCurrent ? "current" : "");
+          return `
+            <div class="roadmap-node ${cls}" data-idx="${i}">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-node-week">Wk ${escapeHtml(c.week)}</div>
+              <div class="roadmap-node-stage">${escapeHtml(c.expectedStage)}</div>
+            </div>`;
+        }).join("");
+
+        const fillPct = checkpoints.length > 1
+          ? (lastReachedIdx >= 0 ? (lastReachedIdx / (checkpoints.length - 1)) * 100 : 0)
+          : 0;
+        fillEl.style.width = fillPct + "%";
+
+        function showDetail(idx) {
+          const c = checkpoints[idx];
+          detailEl.classList.add("open");
+          detailEl.innerHTML = `
+            <div class="roadmap-detail-title">Week ${escapeHtml(c.week)} — ${escapeHtml(c.topic)}</div>
+            <div class="roadmap-detail-meta">${escapeHtml(c.expectedStage)} · Target: ${escapeHtml(c.targetDate)}${c.reached ? " · Reached: " + escapeHtml(c.actualDate) : " · Not yet reached"}</div>
+            <div class="roadmap-detail-body">${escapeHtml(c.debrief) || (c.reached ? "No debrief logged for this checkpoint." : "Awaiting an Update Log entry for this stage.")}</div>`;
+        }
+
+        nodesEl.querySelectorAll(".roadmap-node").forEach(node => {
+          node.addEventListener("click", () => showDetail(parseInt(node.dataset.idx, 10)));
+        });
+
+        // Auto-open the most recently reached checkpoint by default
+        if (lastReachedIdx >= 0) showDetail(lastReachedIdx);
+      }
+
+
       if (pres.length) {
         presEl.innerHTML = pres.map(p => `
           <div class="conf-pill">
