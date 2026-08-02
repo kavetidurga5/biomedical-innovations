@@ -9,12 +9,12 @@
 */
 
 // ── TODO: fill these in from Step 2 ──────────────────────────────
-const SHEET_ID = "14rtBS-Okk7DWrroNznYtepigcF7cCpwGLtwhNT5n0Hs";
+const SHEET_ID = "YOUR_SHEET_ID_HERE";
 
 const GIDS = {
-  dashboard: "1643196814",
-  roster: "572784313",
-  presentations: "2069434519",
+  dashboard: "YOUR_DASHBOARD_GID_HERE",
+  roster: "YOUR_ROSTER_GID_HERE",
+  presentations: "YOUR_PRESENTATION_TRACKER_GID_HERE",
 };
 // ──────────────────────────────────────────────────────────────────
 
@@ -61,16 +61,27 @@ async function fetchTab(gid) {
     return [];
   }
 
-  const allRows = json.table.rows;
-  if (!allRows || allRows.length < 2) return []; // no data rows beyond header
+  const table = json.table;
+  let headers, dataRows;
 
-  const headers = allRows[0].c.map(cell => (cell ? cell.v : "") || "");
-  const dataRows = allRows.slice(1);
+  if (table.parsedNumHeaders && table.parsedNumHeaders > 0) {
+    // gviz auto-detected a real header row on this tab (e.g. bold/frozen
+    // formatting) — cols[].label is already correct, and table.rows is
+    // pure data with no header row mixed in.
+    headers = table.cols.map(c => c.label || "");
+    dataRows = table.rows || [];
+  } else {
+    // No auto-detected header on this tab (plain-text header row) — fall
+    // back to treating the first row ourselves as the header row.
+    if (!table.rows || table.rows.length < 2) return [];
+    headers = table.rows[0].c.map(cell => (cell ? cell.v : "") || "");
+    dataRows = table.rows.slice(1);
+  }
 
   return dataRows
-    // Drop the "^ example row — delete before real roster upload" placeholder
-    // and any fully-empty rows, so it never renders on the live site.
-    .filter(r => r.c[0] && r.c[0].v && !String(r.c[0].v).trim().startsWith("^"))
+    // Drop the "^ example row — delete before real roster upload" placeholder,
+    // fully-empty rows, and any note/instruction rows with a blank first column.
+    .filter(r => r.c[0] && r.c[0].v != null && String(r.c[0].v).trim() !== "" && !String(r.c[0].v).trim().startsWith("^"))
     .map(r =>
       Object.fromEntries(
         r.c.map((cell, i) => [headers[i], cell ? cell.v : null])
