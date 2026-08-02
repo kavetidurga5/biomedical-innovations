@@ -68,6 +68,16 @@
       <div class="roadmap-detail" id="roadmap-detail"></div>
     </div>
 
+    <div id="poster-section" style="display:none;">
+      <p class="conf-heading">Poster</p>
+      <div class="poster-wrap">
+        <a class="poster-frame" id="poster-link" href="#" target="_blank" rel="noopener">
+          <img id="poster-img" src="" alt="Project poster"/>
+        </a>
+        <p class="poster-link-label">Click to view full poster (PDF)</p>
+      </div>
+    </div>
+
     <p class="conf-heading">Presentations</p>
     <div class="conf-row" id="presentations-row">
       <p class="state-message-dark">Loading…</p>
@@ -117,6 +127,17 @@
         ? team.map(t => escapeHtml(t["Student Name"])).join(", ")
         : "Not yet assigned";
       document.getElementById("team-text").innerHTML = `<strong>${teamText}</strong>`;
+
+      // ── Poster (shown only if Dashboard has a Poster PDF filename set) ──
+      const posterPdf = project && project["Poster PDF"] ? project["Poster PDF"].trim() : "";
+      if (posterPdf) {
+        const posterImg = project["Poster Image"] ? project["Poster Image"].trim() : "";
+        document.getElementById("poster-section").style.display = "block";
+        document.getElementById("poster-link").href = `../assets/docs/${posterPdf}`;
+        document.getElementById("poster-img").src = posterImg
+          ? `../assets/img/posters/${posterImg}`
+          : `../assets/img/posters/${posterPdf.replace(/\.pdf$/i, ".jpg")}`;
+      }
 
       // ── Completion badge ──
       const projectStatus = (project && project["Project Status"] || "Active").trim().toLowerCase();
