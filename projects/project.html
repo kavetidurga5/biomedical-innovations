@@ -121,7 +121,7 @@
       document.getElementById("health-text").innerHTML =
         `<strong>${escapeHtml(project ? project["Overall Health"] : "Unknown")}</strong>`;
       document.getElementById("next-pres-text").innerHTML =
-        `<strong>${escapeHtml(project && project["Next Presentation"] ? project["Next Presentation"] : "TBD")}</strong>`;
+        `<strong>${escapeHtml(project && project["Next Presentation"] ? formatGvizDate(project["Next Presentation"]) : "TBD")}</strong>`;
 
       const teamText = team.length
         ? team.map(t => escapeHtml(t["Student Name"])).join(", ")
