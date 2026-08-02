@@ -9,12 +9,12 @@
 */
 
 // ── TODO: fill these in from Step 2 ──────────────────────────────
-const SHEET_ID = "YOUR_SHEET_ID_HERE";
+const SHEET_ID = "14rtBS-Okk7DWrroNznYtepigcF7cCpwGLtwhNT5n0Hs";
 
 const GIDS = {
-  dashboard: "YOUR_DASHBOARD_GID_HERE",
-  roster: "YOUR_ROSTER_GID_HERE",
-  presentations: "YOUR_PRESENTATION_TRACKER_GID_HERE",
+  dashboard: "1643196814",
+  roster: "572784313",
+  presentations: "2069434519",
 };
 // ──────────────────────────────────────────────────────────────────
 
