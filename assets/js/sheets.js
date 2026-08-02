@@ -79,9 +79,17 @@ async function fetchTab(gid) {
   }
 
   return dataRows
-    // Drop the "^ example row — delete before real roster upload" placeholder,
-    // fully-empty rows, and any note/instruction rows with a blank first column.
-    .filter(r => r.c[0] && r.c[0].v != null && String(r.c[0].v).trim() !== "" && !String(r.c[0].v).trim().startsWith("^"))
+    // Drop the "^ example row" placeholder, fully-empty rows, and any
+    // note/instruction rows. Real data rows have more than just column A
+    // filled in — instruction rows (e.g. "This tab is fully computed...")
+    // only populate column A, so require at least one other column to
+    // have a value too.
+    .filter(r => {
+      const first = r.c[0] && r.c[0].v != null ? String(r.c[0].v).trim() : "";
+      if (!first || first.startsWith("^")) return false;
+      const hasOtherData = r.c.slice(1).some(cell => cell && cell.v != null && String(cell.v).trim() !== "");
+      return hasOtherData;
+    })
     .map(r =>
       Object.fromEntries(
         r.c.map((cell, i) => [headers[i], cell ? cell.v : null])
