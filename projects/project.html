@@ -28,30 +28,36 @@
 <section class="detail-hero">
   <div class="detail-hero-inner">
     <a class="detail-back" href="index.html">&larr; All Projects</a>
-    <h1 class="detail-title" id="project-title">Loading…</h1>
 
-    <div class="context-block">
-      <p class="context-label">Current Stage</p>
-      <p class="context-text" id="project-stage">—</p>
+    <p class="detail-eyebrow">Active Project</p>
+    <h1 class="detail-title" id="project-title">Loading…</h1>
+    <p class="detail-body" id="project-subtitle">Fetching live status from the team's tracker…</p>
+
+    <div class="context-grid">
+      <div class="context-block">
+        <p class="context-label">Current Stage</p>
+        <p class="context-text" id="stage-text">—</p>
+      </div>
+      <div class="context-block">
+        <p class="context-label">Overall Health</p>
+        <p class="context-text" id="health-text">—</p>
+      </div>
+      <div class="context-block">
+        <p class="context-label">Team</p>
+        <p class="context-text" id="team-text">—</p>
+      </div>
+      <div class="context-block">
+        <p class="context-label">Next Presentation</p>
+        <p class="context-text" id="next-pres-text">—</p>
+      </div>
     </div>
-    <div class="context-block">
-      <p class="context-label">Status</p>
-      <p class="context-text" id="project-health">—</p>
+
+    <p class="conf-heading">Presentations</p>
+    <div class="conf-row" id="presentations-row">
+      <p class="state-message-dark">Loading…</p>
     </div>
   </div>
 </section>
-
-<main class="detail-section">
-  <h2>Team</h2>
-  <div class="team-list" id="team-list">
-    <p class="state-message">Loading team…</p>
-  </div>
-
-  <h2>Presentations</h2>
-  <div class="conf-row" id="presentations-row">
-    <p class="state-message">Loading presentations…</p>
-  </div>
-</main>
 
 <footer style="background: var(--ink); padding: 30px 48px; text-align:center;">
   <p style="font-size:11px; color: rgba(255,255,255,0.24); letter-spacing:0.05em;">
@@ -72,37 +78,29 @@
 
   if (!projectId) {
     document.getElementById("project-title").textContent = "No project specified";
+    document.getElementById("project-subtitle").textContent = "Go back to Projects and pick one from the list.";
   } else {
     fetchAllTabs().then(({ dashboard, roster, presentations }) => {
       const project = dashboard.find(r => r["Project"] === projectId);
       const team = roster.filter(r => r["Project"] === projectId);
       const pres = presentations.filter(r => r["Project"] === projectId);
 
-      // ── Header / status ──
       document.getElementById("project-title").textContent = projectId;
+      document.getElementById("project-subtitle").textContent =
+        project ? "Live status for this project, pulled directly from the team's tracker." : "No dashboard entry found for this project yet.";
 
-      if (project) {
-        document.getElementById("project-stage").textContent = project["Current Stage"] || "Not yet set";
-        document.getElementById("project-health").textContent =
-          `${project["Overall Health"] || "Unknown"} — next presentation: ${project["Next Presentation"] || "TBD"}`;
-      } else {
-        document.getElementById("project-stage").textContent = "No dashboard entry found for this project.";
-        document.getElementById("project-health").textContent = "—";
-      }
+      document.getElementById("stage-text").innerHTML =
+        `<strong>${escapeHtml(project ? project["Current Stage"] : "Not yet set")}</strong>`;
+      document.getElementById("health-text").innerHTML =
+        `<strong>${escapeHtml(project ? project["Overall Health"] : "Unknown")}</strong>`;
+      document.getElementById("next-pres-text").innerHTML =
+        `<strong>${escapeHtml(project && project["Next Presentation"] ? project["Next Presentation"] : "TBD")}</strong>`;
 
-      // ── Team ──
-      const teamEl = document.getElementById("team-list");
-      if (team.length) {
-        teamEl.innerHTML = team.map(t => `
-          <div class="team-member">
-            <div class="team-member-name">${escapeHtml(t["Student Name"])}</div>
-            <div class="team-member-role">${escapeHtml(t["Role / Attribution Note"] || t["Status"] || "")}</div>
-          </div>`).join("");
-      } else {
-        teamEl.innerHTML = `<p class="state-message">Team roster not yet populated for this project.</p>`;
-      }
+      const teamText = team.length
+        ? team.map(t => escapeHtml(t["Student Name"])).join(", ")
+        : "Not yet assigned";
+      document.getElementById("team-text").innerHTML = `<strong>${teamText}</strong>`;
 
-      // ── Presentations ──
       const presEl = document.getElementById("presentations-row");
       if (pres.length) {
         presEl.innerHTML = pres.map(p => `
@@ -114,11 +112,12 @@
             </div>
           </div>`).join("");
       } else {
-        presEl.innerHTML = `<p class="state-message">No presentations scheduled yet.</p>`;
+        presEl.innerHTML = `<p class="state-message-dark">No presentations scheduled yet.</p>`;
       }
     }).catch(err => {
       console.error(err);
       document.getElementById("project-title").textContent = "Couldn't load project data";
+      document.getElementById("project-subtitle").textContent = "Try refreshing the page.";
     });
   }
 </script>
