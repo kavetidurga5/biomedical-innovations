@@ -30,7 +30,10 @@
     <a class="detail-back" href="index.html">&larr; All Projects</a>
 
     <p class="detail-eyebrow">Active Project</p>
-    <h1 class="detail-title" id="project-title">Loading…</h1>
+    <h1 class="detail-title">
+      <span id="project-title">Loading…</span>
+      <span class="status-badge" id="status-badge" style="display:none;">✓ Complete</span>
+    </h1>
     <p class="detail-body" id="project-subtitle">Fetching live status from the team's tracker…</p>
 
     <div class="context-grid">
@@ -52,9 +55,10 @@
       </div>
     </div>
 
-    <p class="conf-heading">Roadmap</p>
+    <p class="conf-heading" id="roadmap-heading">Roadmap</p>
+    <p class="roadmap-note" id="roadmap-note" style="display:none;"></p>
     <div class="roadmap-wrap">
-      <div class="roadmap-track">
+      <div class="roadmap-track" id="roadmap-track">
         <div class="roadmap-line-bg"></div>
         <div class="roadmap-line-fill" id="roadmap-fill"></div>
         <div class="roadmap-nodes" id="roadmap-nodes">
@@ -114,7 +118,46 @@
         : "Not yet assigned";
       document.getElementById("team-text").innerHTML = `<strong>${teamText}</strong>`;
 
-      // ── Roadmap ──
+      // ── Completion badge ──
+      const projectStatus = (project && project["Project Status"] || "Active").trim().toLowerCase();
+      if (projectStatus === "complete") {
+        document.getElementById("status-badge").style.display = "inline-block";
+      }
+
+      // ── Tracking mode: Standard (syllabus-matched) vs Custom (exception) ──
+      const trackingMode = (project && project["Tracking Mode"] || "Standard").trim().toLowerCase();
+
+      if (trackingMode === "custom") {
+        // Custom track: no syllabus alignment. Show a plain chronological
+        // log built directly from this project's Update Log entries.
+        document.getElementById("roadmap-heading").textContent = "Progress Log";
+        const noteEl = document.getElementById("roadmap-note");
+        noteEl.style.display = "block";
+        noteEl.textContent = "This project didn't follow the standard syllabus timeline — progress is tracked here as a chronological log instead.";
+
+        // Hide the fill-bar timeline entirely; repurpose the track container
+        document.querySelector(".roadmap-line-bg").style.display = "none";
+        document.getElementById("roadmap-fill").style.display = "none";
+        document.getElementById("roadmap-detail").style.display = "none";
+
+        const sortedLogs = logs.slice().sort((a, b) => String(a["Timestamp"]).localeCompare(String(b["Timestamp"])));
+        const nodesEl = document.getElementById("roadmap-nodes");
+        if (!sortedLogs.length) {
+          nodesEl.innerHTML = `<p class="state-message-dark">No progress entries logged yet.</p>`;
+        } else {
+          nodesEl.innerHTML = `<div class="milestone-list">` + sortedLogs.map(l => `
+            <div class="milestone-item">
+              <div class="milestone-dot"></div>
+              <div>
+                <div class="milestone-date">${escapeHtml(formatGvizDate(l["Timestamp"]))} · ${escapeHtml(l["Biodesign Stage"] || "")}</div>
+                <div class="milestone-stage">${escapeHtml(l["Entry Type"] || "Update")}</div>
+                <div class="milestone-desc">${escapeHtml(l["Description"] || "")}</div>
+              </div>
+            </div>`).join("") + `</div>`;
+        }
+
+      } else {
+      // ── Standard track: Roadmap ──
       // Syllabus Map rows are the fixed checkpoints (ordered by Week).
       // A checkpoint is "reached" if there's an Update Log entry for this
       // project whose Biodesign Stage matches the checkpoint's Expected
@@ -180,6 +223,7 @@
         // Auto-open the most recently reached checkpoint by default
         if (lastReachedIdx >= 0) showDetail(lastReachedIdx);
       }
+      } // end standard-tracking else branch
 
 
       const presEl = document.getElementById("presentations-row");
