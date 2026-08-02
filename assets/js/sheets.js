@@ -18,6 +18,15 @@ const GIDS = {
   syllabus: "1905738931",
   updateLog: "1731368813",
 };
+
+// Some tabs have header cells containing extra baked-in guidance text
+// (e.g. "Presentation Type\nMilestone deliverable\nMid-Semester Check-In\nSymposium"
+// all in one cell), which breaks reading the header as a clean column name.
+// For any tab where that happens, list its real column names here in order —
+// fetchTab will use these instead of whatever the sheet's header cells contain.
+const HEADER_OVERRIDES = {
+  [GIDS.presentations]: ["Project", "Presentation Type", "Date", "Prep Status", "Owner", "Key (calc)"],
+};
 // ──────────────────────────────────────────────────────────────────
 
 /**
@@ -93,6 +102,12 @@ async function fetchTab(gid) {
     if (!table.rows || table.rows.length < 2) return [];
     headers = table.rows[0].c.map(cell => (cell ? cell.v : "") || "");
     dataRows = table.rows.slice(1);
+  }
+
+  // Override with known-clean header names if this tab's header cells
+  // contain extra baked-in text (see HEADER_OVERRIDES above).
+  if (HEADER_OVERRIDES[gid] && HEADER_OVERRIDES[gid].length === headers.length) {
+    headers = HEADER_OVERRIDES[gid];
   }
 
   return dataRows
