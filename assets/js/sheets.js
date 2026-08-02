@@ -25,7 +25,7 @@ const GIDS = {
 // For any tab where that happens, list its real column names here in order —
 // fetchTab will use these instead of whatever the sheet's header cells contain.
 const HEADER_OVERRIDES = {
-  [GIDS.presentations]: ["Project", "Presentation Type", "Date", "Prep Status", "Owner", "Key (calc)"],
+  [GIDS.presentations]: ["Project", "Presentation Type", "Date", "Prep Status", "Owner", "Key (calc)", "Event Name", "Link"],
 };
 // ──────────────────────────────────────────────────────────────────
 
