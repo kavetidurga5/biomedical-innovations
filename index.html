@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Biomedical Innovations — UTSW</title>
+  <title>Biomedical Innovations | UTSW</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -264,6 +264,47 @@
     .email-addr { font-size: 11px; color: var(--teal); text-decoration: none; word-break: break-all; }
     .email-addr:hover { text-decoration: underline; }
 
+    /* ── EXPLORE (tabs: Path / Resources / FAQ) ── */
+    .explore { background: var(--white); }
+    .tab-bar { display: flex; gap: 8px; margin: 30px 0 34px; border-bottom: 1px solid var(--steel); }
+    .tab-btn {
+      font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--ghost);
+      background: none; border: none; padding: 10px 4px; margin-right: 22px; cursor: pointer;
+      border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--navy); }
+    .tab-btn.active { color: var(--navy); border-bottom-color: var(--teal); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .path-card { background: var(--mist); border: 1px solid var(--steel); border-radius: var(--r); padding: 26px 24px; }
+    .path-card.build { background: var(--white); border: 1.5px solid var(--gold); }
+    .path-tag {
+      display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 11px; border-radius: 100px; margin-bottom: 14px;
+    }
+    .path-tag.core { background: rgba(2,128,144,0.11); color: var(--teal); }
+    .path-tag.build-tag { background: rgba(232,160,32,0.14); color: #96700f; }
+    .path-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 9px; }
+    .path-desc { font-size: 13px; line-height: 1.7; color: var(--slate); margin-bottom: 16px; }
+    .path-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .path-list li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; color: var(--slate); line-height: 1.5; }
+    .path-check { color: var(--teal); flex-shrink: 0; font-weight: 700; }
+    .path-card.build .path-check { color: #96700f; }
+
+    .resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .resource-card { background: var(--mist); border: 1px solid var(--steel); border-radius: var(--r); padding: 22px 20px; }
+    .resource-icon { font-size: 20px; display: block; margin-bottom: 10px; }
+    .resource-title { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--ink); margin-bottom: 7px; }
+    .resource-body { font-size: 13px; line-height: 1.65; color: var(--slate); }
+
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid var(--steel); padding: 20px 0; }
+    .faq-item:first-child { padding-top: 0; }
+    .faq-q { font-size: 14.5px; font-weight: 600; color: var(--ink); margin-bottom: 7px; }
+    .faq-a { font-size: 13.5px; line-height: 1.75; color: var(--slate); }
+
     /* ── FOOTER ── */
     footer { background: var(--ink); padding: 30px 48px; text-align: center; }
     .footer-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px; }
@@ -278,12 +319,14 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-right { width: 100%; }
-      .hero-left { padding: 100px 28px 52px; }
+      .hero-right { width: 100%; order: -1; max-height: 46vh; overflow: hidden; }
+      .hero-photo { height: 46vh; object-fit: cover; object-position: center 25%; }
+      .hero-left { padding: 22px 28px 52px; }
       .ddh-photos { grid-template-columns: 1fr; }
       .photo-frame { height: 260px; }
       section { padding: 56px 24px; }
       .about-grid, .pipeline-grid, .context-grid { grid-template-columns: 1fr; }
+      .path-grid, .resource-grid { grid-template-columns: 1fr; }
       .email-grid { grid-template-columns: 1fr; }
       .conf-row { flex-direction: column; }
       .navbar { padding: 16px 24px; }
@@ -307,7 +350,6 @@
         <span class="navbar-sub">UT Southwestern · ENRH 116</span>
       </div>
     </div>
-    <a href="projects/index.html" style="font-size:13px; font-weight:500; color:rgba(255,255,255,0.75); text-decoration:none; margin-right:20px;">Projects</a>
     <span class="navbar-pill">MS1 &amp; MS2 · Open Enrollment</span>
   </nav>
 
@@ -323,10 +365,10 @@
     <p class="hero-sub">A medical elective where you build the solution.</p>
     <p class="hero-body">Over 12 weeks, you'll work alongside physicians and engineers to design, prototype, and deliver medical devices and simulation tools that address real clinical gaps.</p>
     <div class="hero-meta">
-      <div class="meta-item"><span class="meta-label">Course</span><span class="meta-value">ENRH 116</span></div>
       <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-value">12 Weeks</span></div>
+      <div class="meta-item"><span class="meta-label">Background Needed</span><span class="meta-value">None Required</span></div>
       <div class="meta-item"><span class="meta-label">Open To</span><span class="meta-value">MS1 &amp; MS2</span></div>
-      <div class="meta-item"><span class="meta-label">Focus</span><span class="meta-value">Device Innovation</span></div>
+      <div class="meta-item"><span class="meta-label">Optional Path</span><span class="meta-value">Team · Prototype · Present</span></div>
     </div>
   </div>
 
@@ -341,13 +383,13 @@
 <section class="about">
   <div class="section-inner">
     <p class="section-eyebrow reveal">What this elective is</p>
-    <h2 class="section-title reveal">Where clinical instinct meets engineering.</h2>
-    <p class="section-body reveal">A maker-track scholarly experience for UTSW preclinical students. No engineering degree required — just a clinical problem worth solving.</p>
+    <h2 class="section-title reveal">Biodesign, from problem to product.</h2>
+    <p class="section-body reveal">A 12-week course to learn the basics of biodesign, with the opportunity to create a working product. Open to all UTSW preclinical students; no engineering background required.</p>
     <div class="about-grid">
       <div class="about-card reveal">
         <span class="about-card-icon">🔬</span>
-        <h3 class="about-card-title">Real Projects</h3>
-        <p class="about-card-body">Build task trainers and medical education devices that address genuine gaps in clinical training — products that outlast the semester.</p>
+        <h3 class="about-card-title">Biodesign Fundamentals</h3>
+        <p class="about-card-body">Learn the design process behind medical devices and simulation tools, from identifying a clinical problem to prototyping a solution.</p>
       </div>
       <div class="about-card reveal">
         <span class="about-card-icon">🏥</span>
@@ -363,7 +405,80 @@
       <div class="about-card reveal">
         <span class="about-card-icon">💡</span>
         <h3 class="about-card-title">Bring Your Idea</h3>
-        <p class="about-card-body">Already have a clinical problem in mind? Pitch your own project — we'll help you scope it and connect you with the right faculty mentor.</p>
+        <p class="about-card-body">Already have a clinical problem in mind? Pitch your own project, and we'll help you scope it and connect you with the right faculty mentor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── EXPLORE (tabbed: Path / Resources / FAQ) ── -->
+<section class="explore">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Details</p>
+    <h2 class="section-title reveal">The path, the resources, the honest answers.</h2>
+    <div class="tab-bar reveal">
+      <button class="tab-btn active" data-tab="path" type="button">The Path</button>
+      <button class="tab-btn" data-tab="resources" type="button">Resources</button>
+      <button class="tab-btn" data-tab="faq" type="button">FAQ</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-path">
+      <div class="path-grid">
+        <div class="path-card">
+          <span class="path-tag core">Core: Everyone</span>
+          <h3 class="path-title">1 hour a week.</h3>
+          <p class="path-desc">Same time commitment as any other elective: a weekly session and an individual deliverable. No team required.</p>
+          <ul class="path-list">
+            <li><span class="path-check">✓</span>~1 hr/week, weekly session</li>
+            <li><span class="path-check">✓</span>Individual deliverable</li>
+            <li><span class="path-check">✓</span>No BME background needed</li>
+            <li><span class="path-check">✓</span>Free lunch</li>
+          </ul>
+        </div>
+        <div class="path-card build">
+          <span class="path-tag build-tag">Build Track: Opt In</span>
+          <h3 class="path-title">Team up. Build it. Present it.</h3>
+          <p class="path-desc">Time scales with what you put in, but you leave with something real: a working prototype and a conference presentation.</p>
+          <ul class="path-list">
+            <li><span class="path-check">✓</span>Faculty-advised team project</li>
+            <li><span class="path-check">✓</span>3D printing &amp; lab space for prototyping</li>
+            <li><span class="path-check">✓</span>Deliverable: prototype + conference presentation</li>
+            <li><span class="path-check">✓</span>Time commitment scales with your goals</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-resources">
+      <div class="resource-grid">
+        <div class="resource-card">
+          <span class="resource-icon">🧑‍⚕️</span>
+          <h3 class="resource-title">Mentors</h3>
+          <p class="resource-body">A faculty physician-advisor for every project, plus subject matter experts on call for technical troubleshooting during the build.</p>
+        </div>
+        <div class="resource-card">
+          <span class="resource-icon">🛠️</span>
+          <h3 class="resource-title">Tools &amp; Space</h3>
+          <p class="resource-body">3D printers, prototyping materials, and dedicated lab space through the UTSW Biodesign Center.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-faq">
+      <div class="faq-list">
+        <div class="faq-item">
+          <p class="faq-q">How does this differ from other electives?</p>
+          <p class="faq-a">The Core path is the same 1 hr/week commitment as any other elective, plus free lunch. The Build Track asks for more of your time, but you leave with a real deliverable: a working prototype and a conference presentation.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What do I need to already know?</p>
+          <p class="faq-a">Nothing beyond your MS1/MS2 coursework. No CAD, no prior engineering, no lab experience. We teach the design process; you bring the clinical eye.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What can I expect to gain?</p>
+          <p class="faq-a">Every Core student will understand the basics of biodesign and be equipped to tackle problems in the future. The Build Track is effort driven and will require more time, but you'll work alongside a team of other students to create a working solution and have the opportunity to present at conferences and symposia, and even publish. See prior work below.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -395,7 +510,7 @@
     <div class="context-grid reveal">
       <div class="context-block">
         <p class="context-label">Clinical Problem</p>
-        <p class="context-text">DDH is treatable with a Pavlik harness when caught early — but delayed diagnosis leads to surgery. The <strong>Barlow and Ortolani maneuvers</strong> are the key physical exam findings: Barlow dislocates an unstable hip posteriorly, while Ortolani reduces a dislocated hip with a palpable clunk. These findings require deliberate practice most trainees never get.</p>
+        <p class="context-text">DDH is treatable with a Pavlik harness when caught early. Delayed diagnosis leads to surgery. The <strong>Barlow and Ortolani maneuvers</strong> are the key physical exam findings: Barlow dislocates an unstable hip posteriorly, while Ortolani reduces a dislocated hip with a palpable clunk. These findings require deliberate practice most trainees never get.</p>
       </div>
       <div class="context-block">
         <p class="context-label">The Gap</p>
@@ -403,7 +518,7 @@
       </div>
       <div class="context-block">
         <p class="context-label">Our Approach</p>
-        <p class="context-text">A 3D-printed task trainer with haptic feedback for both positive and negative Barlow and Ortolani findings — built in collaboration with <strong>Dr. Kim Ngoc Van Horn</strong>, Pediatric Emergency Medicine faculty at Children's Health.</p>
+        <p class="context-text">A 3D-printed task trainer with haptic feedback for both positive and negative Barlow and Ortolani findings, built in collaboration with <strong>Dr. Kim Ngoc Van Horn</strong>, Pediatric Emergency Medicine faculty at Children's Health.</p>
       </div>
       <div class="context-block">
         <p class="context-label">Status</p>
@@ -443,7 +558,7 @@
   <div class="section-inner">
     <p class="section-eyebrow reveal">What's next</p>
     <h2 class="section-title reveal">13 task trainers in the pipeline.</h2>
-    <p class="section-body reveal">In collaboration with Dr. Van Horn, we're scoping task trainers across three clinical domains — each targeting a procedure or exam skill where simulation access is limited.</p>
+    <p class="section-body reveal">In collaboration with Dr. Van Horn, we're scoping task trainers across three clinical domains, each targeting a procedure or exam skill where simulation access is limited.</p>
     <div class="pipeline-grid">
       <div class="tt-card reveal">
         <div class="tt-header msk"><span class="tt-icon">🦴</span><span class="tt-category">MSK</span></div>
@@ -495,7 +610,7 @@
         <span class="step-num">2</span>
         <div class="step-content">
           <p class="step-title">Register for ENRH 116</p>
-          <p class="step-desc">Search for <strong>ENRH 116 — Biomedical Innovations</strong> in the elective portal.</p>
+          <p class="step-desc">Search for <strong>ENRH 116, Biomedical Innovations</strong> in the elective portal.</p>
         </div>
       </div>
       <div class="join-step reveal">
@@ -535,7 +650,7 @@
 <footer>
   <div class="footer-brand">
     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+CiAgPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTAiIGZpbGw9IiMwMjgwOTAiLz4KICA8dGV4dCB4PSIyNCIgeT0iMzIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iYm9sZCIKICAgICAgICB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGRkZGIiBsZXR0ZXItc3BhY2luZz0iLTEiPkJJPC90ZXh0PgogIDxjaXJjbGUgY3g9IjgiIGN5PSI4IiByPSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNFOEEwMjAiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRThBMDIwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxMSIgeTE9IjgiIHgyPSIyNCIgeTI9IjgiIHN0cm9rZT0iI0U4QTAyMCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjYiLz4KICA8bGluZSB4MT0iMjQiIHkxPSI0MCIgeDI9IjM3IiB5Mj0iNDAiIHN0cm9rZT0iI0U4QTAyMCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjYiLz4KPC9zdmc+" alt="BI logo" class="footer-logo"/>
-    <span class="footer-wordmark">Biomedical Innovations — UTSW</span>
+    <span class="footer-wordmark">Biomedical Innovations | UTSW</span>
   </div>
   <p class="footer-sub">ENRH 116 &nbsp;·&nbsp; UT Southwestern Medical School &nbsp;·&nbsp; Kaveti · Zhao · Wu · Garlapati</p>
 </footer>
@@ -545,6 +660,16 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.10 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+    });
+  });
 </script>
 </body>
 </html>
